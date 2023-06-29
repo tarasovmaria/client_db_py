@@ -80,7 +80,7 @@ def find_client(con, cur, name=None, last_name=None, email=None, number=None):
             """, (name, last_name, email))
     else:
         cur.execute("""
-            SELECT c.client_id, c.name, c.last_name, c.email, cp.last_name FROM clients c
+            SELECT c.client_id, c.name, c.last_name, c.email, cp.number FROM clients c
             LEFT JOIN client_phone cp ON c.client_id = cp.client_id
             WHERE c.name LIKE %s AND c.last_name LIKE %s
             AND c.email LIKE %s AND cp.number like %s
