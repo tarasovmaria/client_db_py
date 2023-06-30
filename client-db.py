@@ -20,32 +20,48 @@ def create_db(con, cur):
             client_id INTEGER NOT NULL,
             FOREIGN KEY (client_id) EFERENCES clients (client_id)
             );""")
-    con.commit()
 
 
 def add_client(con, cur, name, last_name, email, number=None):
 # Функция, позволяющая добавить нового клиента.
     cur.execute("""INSERT INTO clients(name, last_name, email) VALUES(%s, %s, %s);""", (name, last_name, email))
-    con.commit()
     
         
 def add_phone(con, cur, client_id, number):
 # Функция, позволяющая добавить телефон для существующего клиента.
     cur.execute("""INSERT INTO client_phone(client_id, number) VALUES(%s, %s);
             """, (client_id, number))
-    con.commit()
 def change_client_info(con, cur, client_id, name=None, last_name=None, email=None, number=None):
 # Функция, позволяющая изменить данные о клиенте.
-    cur.execute("""
-            UPDATE clients SET name=%s, last_name=%s, email=%s, number=%s WHERE client_id=%s;
-            """, (name, last_name, email, number, client_id))
-    con.commit()
+    if name is None:
+        pass
+    else:
+        cur.execute("""
+            UPDATE clients name=%s WHERE client_id=%s;
+            """, (name, client_id))
+    if last_name is None:
+        pass
+    else:
+        cur.execute("""
+            UPDATE clients last_name=%s WHERE client_id=%s;
+            """, (last_name, client_id))
+    if email is None:
+        pass
+    else:
+        cur.execute("""
+            UPDATE clients email=%s WHERE client_id=%s;
+            """, (email, client_id))
+    if number is None:
+        pass
+    else:
+        cur.execute("""
+            UPDATE client_phone number=%s WHERE client_id=%s;
+            """, (number, client_id))
 def delete_phone(con, cur, client_id, number):
 # Функция, позволяющая удалить телефон для существующего клиента.
     cur.execute("""
     DELETE FROM client_phone WHERE client_id=%s AND number=%s;
     """, (client_id, number))
-    con.commit()
 
 def delete_client(con, cur, client_id):
 # Функция, позволяющая удалить существующего клиента.
@@ -55,7 +71,6 @@ def delete_client(con, cur, client_id):
     cur.execute("""
         DELETE FROM clients WHERE client_id=%s
     """, (client_id,))
-    con.commit()
 
 def find_client(con, cur, name=None, last_name=None, email=None, number=None):
 # Функция, позволяющая найти клиента по его данным: имени, фамилии, email или телефону.
@@ -85,7 +100,6 @@ def find_client(con, cur, name=None, last_name=None, email=None, number=None):
             WHERE c.name LIKE %s AND c.last_name LIKE %s
             AND c.email LIKE %s AND cp.number like %s
             """, (name, last_name, email, last_name))
-    con.commit()
     return cur.fetchall()
 
 if __name__ == '__main__':
@@ -99,3 +113,4 @@ if __name__ == '__main__':
             delete_phone(con, cur, 1, "79877876543")
             pprint(find_client(con, cur, None, None, "heuyy38ryhdf@yahoo.com"))
             pprint(find_client(con, cur, "Loren"))
+    con.close()
